@@ -58,7 +58,6 @@ const Home = () => {
     const addBtn = {
         "text": "add",
         "function": () => navToAdd(),
-        "id": "add-product-btn"
     };
 
     const delBtn = {

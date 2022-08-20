@@ -20,7 +20,7 @@ const Add = () => {
     const cancelBtn = {
         "text": "cancel",
         "function": () => goToHome(),
-        "id": 'cancel-btn'
+        // "id": 'cancel-btn'
     }
 
     return <> <Header pageName="Add"

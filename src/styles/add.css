@@ -1,0 +1,11 @@
+#product_form {
+    padding: 150px 40px 100px 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    width: 60%;
+    display: flex;
+    justify-content: space-between;
+}

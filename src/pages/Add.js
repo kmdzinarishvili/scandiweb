@@ -53,14 +53,13 @@ const Add = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setInputValue({ ...inputValues, [name]: value });
-        if (submitted) {
-            validate();
-        }
+        // if (submitted) {
+        validate();
+        // }
     }
 
 
     const validate = () => {
-        setSubmitted(true);
         if (inputValues["sku"].length > 0) {
             setErrors((prev) => { return { ...prev, "skuIsValid": true } });
         }
@@ -101,6 +100,8 @@ const Add = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setSubmitted(true);
+
 
         const valid = validate();
         if (valid) {

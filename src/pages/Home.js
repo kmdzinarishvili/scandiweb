@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Product from '../components/Product';
@@ -36,8 +37,19 @@ const Home = () => {
             "type": "type"
         },
 
-    ]
+    ];
 
+    const [checked, setChecked] = useState([]);
+
+    const handleCheck = async (id) => {
+        setChecked((prev) => {
+            if (prev.includes(id)) {
+                return prev.splice(prev.indexOf(id));
+            } else {
+                return [...prev, id];
+            }
+        });
+    };
 
     return <div className="App">
         <Header pageName="List"
@@ -46,11 +58,14 @@ const Home = () => {
         <div className="container">
             {data.map((item) => {
                 return <Product
+                    handleCheck={() => handleCheck(item.sku)}
                     key={item.sku}
                     sku={item.sku}
                     name={item.name}
                     price={item.price}
-                    type={item.type} />
+                    type={item.type}
+                    isChecked={checked.includes(item.sku)}
+                />
 
             })}
         </div>

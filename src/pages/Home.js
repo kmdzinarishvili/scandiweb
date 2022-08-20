@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Product from '../components/Product';
@@ -40,6 +41,7 @@ const Home = () => {
     ];
 
     const [checked, setChecked] = useState([]);
+    const navigate = useNavigate();
 
     const handleCheck = async (id) => {
         setChecked((prev) => {
@@ -50,11 +52,26 @@ const Home = () => {
             }
         });
     };
+    const navToAdd = () => {
+        navigate('/add-product');
+    }
+    const addBtn = {
+        "text": "add",
+        "function": () => navToAdd(),
+        "id": "add-product-btn"
+    };
+
+    const delBtn = {
+        "text": "mass delete",
+        "function": () => console.log("mass delete"),
+        "id": "delete-product-btn"
+    }
+    //navigate
 
     return <div className="App">
         <Header pageName="List"
-            funct1={() => console.log("clicked")}
-            funct2={() => console.log("clicked2")} />
+            button1={addBtn}
+            button2={delBtn} />
         <div className="container">
             {data.map((item) => {
                 return <Product

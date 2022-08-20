@@ -1,13 +1,14 @@
 import '../styles/header.css'
 
-const Header = ({ pageName, funct1, funct2 }) => {
+// button1 and 2 are object with function, text, and id attributes
+const Header = ({ pageName, button1, button2 }) => {
 
 
     return <div className='header'>
         <h2 className='title'>Project {pageName}</h2>
         <span className='buttons'>
-            <button onClick={funct1}>{"button1"}</button>
-            <button onClick={funct2}>{"button2"} </button>
+            <button onClick={button1.function} id={button1.id} >{button1.text}</button>
+            <button onClick={button2.function} id={button2.id}>{button2.text} </button>
         </span>
     </div>
 }

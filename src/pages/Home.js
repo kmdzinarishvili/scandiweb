@@ -12,41 +12,30 @@ const Home = () => {
             "type": "type"
         },
         {
-            "sku": 1,
+            "sku": 2,
             "name": "anme",
             "price": 12423,
             "type": "type"
         },
         {
-            "sku": 1,
+            "sku": 3,
             "name": "anme",
             "price": 12423,
             "type": "type"
         },
         {
-            "sku": 1,
+            "sku": 4,
             "name": "anme",
             "price": 12423,
             "type": "type"
         },
         {
-            "sku": 1,
+            "sku": 5,
             "name": "anme",
             "price": 12423,
             "type": "type"
         },
-        {
-            "sku": 1,
-            "name": "anme",
-            "price": 12423,
-            "type": "type"
-        },
-        {
-            "sku": 1,
-            "name": "anme",
-            "price": 12423,
-            "type": "type"
-        }
+
     ]
 
 
@@ -57,6 +46,7 @@ const Home = () => {
         <div className="container">
             {data.map((item) => {
                 return <Product
+                    key={item.sku}
                     sku={item.sku}
                     name={item.name}
                     price={item.price}

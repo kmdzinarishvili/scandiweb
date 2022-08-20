@@ -1,17 +1,25 @@
-import logo from './logo.svg';
 import './App.css';
-import Header from './components/Header';
-import Footer from './components/Footer';
+
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import Add from './pages/Add';
 
 const App = () => {
   return (
-    <div className="App">
-      <Header pageName="List"
-        funct1={() => console.log("clicked")}
-        funct2={() => console.log("clicked2")} />
-
-      <Footer />
-    </div>
+    <Router>
+      <Routes>
+        <Route exact path='/' element={<Home />} />
+        <Route path="add-product" element={<Add />} />
+        <Route
+          path="*"
+          element={
+            <main style={{ padding: "1rem" }}>
+              <p>There's nothing here!</p>
+            </main>
+          }
+        />
+      </Routes>
+    </Router>
   );
 }
 

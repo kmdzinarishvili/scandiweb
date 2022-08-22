@@ -13,7 +13,7 @@ const Add = () => {
         sku: "",
         name: "",
         price: "",
-        productType: "DVD",
+        productType: "dvd",
         size: "",
         height: "",
         width: "",
@@ -53,9 +53,7 @@ const Add = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setInputValue({ ...inputValues, [name]: value });
-        // if (submitted) {
         validate();
-        // }
     }
 
 
@@ -86,9 +84,9 @@ const Add = () => {
         }
 
         let isValid = errors["skuIsValid"] && errors["nameIsValid"] && errors["priceIsValid"];
-        if (inputValues.productType === "DVD") {
+        if (inputValues.productType === "dvd") {
             isValid = isValid && errors["sizeIsValid"];
-        } else if (inputValues.productType === "Book") {
+        } else if (inputValues.productType === "book") {
             isValid = isValid && errors["weightIsValid"];
         } else {
             isValid = isValid && errors["heightIsValid"] && errors["widthIsValid"] && errors["lengthIsValid"];
@@ -182,7 +180,7 @@ const Add = () => {
                             onChange={(e) => handleChange(e)}
                         />
                     </label>
-                    <p>Please, provide size.</p>
+                    <p className='request'>Please, provide size.</p>
                 </div>
                 : inputValues['productType'] === "Furniture" ?
                     <div id="Furniture">
@@ -208,7 +206,7 @@ const Add = () => {
                             <p className='error'>Please, provide the data of indicated type</p>
                         }
                         <label>
-                            Width(CM)
+                            Width(CM):
                             <input type="number"
                                 name="width"
                                 id='width'
@@ -223,7 +221,7 @@ const Add = () => {
                             <p className='error'>Please, provide the data of indicated type</p>
                         }
                         <label>
-                            Length(CM)
+                            Length(CM):
                             <input type="number"
                                 name="length"
                                 id='length'
@@ -231,7 +229,7 @@ const Add = () => {
                                 onChange={(e) => handleChange(e)}
                             />
                         </label>
-                        <p>Please, provide dimensions.</p>
+                        <p className='request'>Please, provide dimensions.</p>
                     </div> :
                     <div id="Book">
                         {submitted && !inputValues["weight"] &&
@@ -241,7 +239,7 @@ const Add = () => {
                             <p className='error'>Please, provide the data of indicated type</p>
                         }
                         <label>
-                            Weight(KG)
+                            Weight(KG):
                             <input type="number"
                                 name="weight"
                                 id='weight'
@@ -249,9 +247,10 @@ const Add = () => {
                                 onChange={(e) => handleChange(e)}
                             />
                         </label>
-                        <p>Please, provide weight.</p>
+                        <p className='request'>Please, provide weight.</p>
                     </div>}
         </form>
+
 
         <Footer />
     </>

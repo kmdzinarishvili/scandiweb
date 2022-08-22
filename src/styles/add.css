@@ -1,15 +1,38 @@
 #product_form {
-    padding: 150px 40px 100px 40px;
+    padding: 125px 0px 100px 0px;
     display: flex;
     flex-direction: column;
+    margin-left: 10%;
 }
 
 label {
-    width: 60%;
+    width: 400px;
     display: flex;
     justify-content: space-between;
+    display: flex;
+    align-items: center;
+
 }
 
 .error {
     color: red;
+}
+
+label,
+.request {
+    margin: 10px;
+    font-size: 20px;
+}
+
+.request {
+    margin-top: 20px;
+}
+
+input,
+select {
+    width: 60%;
+    padding: 10px 10px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    font-size: 15px;
 }

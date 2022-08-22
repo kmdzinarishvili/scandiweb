@@ -38,12 +38,13 @@ const Home = () => {
         navigate('/add-product');
     }
     const addBtn = {
-        "text": "add",
+        "text": "ADD",
         "function": () => navToAdd(),
     };
 
+    //ADD MASS DELETE FUNCTIONALITY
     const delBtn = {
-        "text": "mass delete",
+        "text": "MASS DELETE",
         "function": () => console.log("mass delete"),
         "id": "delete-product-btn"
     }

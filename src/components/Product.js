@@ -1,8 +1,9 @@
 import '../styles/product.css';
 
 //price must be float
-const Product = ({ sku, name, price, type, handleCheck, isChecked }) => {
-
+const Product = ({ item, handleCheck, isChecked }) => {
+    const { sku, name, price, type } = item;
+    console.log(item);
     return <div className="prod">
         <input type="checkbox"
             checked={isChecked}
@@ -12,7 +13,11 @@ const Product = ({ sku, name, price, type, handleCheck, isChecked }) => {
             <p>{sku}</p>
             <p>{name}</p>
             <p>{price.toFixed(2)} $</p>
-            <p>{type}</p>
+            {type === "dvd" ?
+                <p>Size {item["size"]} MB</p> :
+                type === "book" ?
+                    <p>Weight {item["weight"]} KG</p> :
+                    <p>Dimension {item["length"]}x{item["width"]}x{item["height"]} KG</p>}
         </div>
     </div>
 

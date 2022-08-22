@@ -4,7 +4,11 @@
     margin: 30px;
     padding: 20px;
     border-radius: 3%;
+    height: 200px;
 }
+
+
+
 
 .text {
     display: flex;

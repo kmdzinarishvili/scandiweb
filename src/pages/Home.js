@@ -1,47 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Product from '../components/Product';
 import "../styles/home.css";
 
+
 const Home = () => {
-    let data = [
-        {
-            "sku": 1,
-            "name": "anme",
-            "price": 12423,
-            "type": "type"
-        },
-        {
-            "sku": 2,
-            "name": "anme",
-            "price": 12423,
-            "type": "type"
-        },
-        {
-            "sku": 3,
-            "name": "anme",
-            "price": 12423,
-            "type": "type"
-        },
-        {
-            "sku": 4,
-            "name": "anme",
-            "price": 12423,
-            "type": "type"
-        },
-        {
-            "sku": 5,
-            "name": "anme",
-            "price": 12423,
-            "type": "type"
-        },
-
-    ];
-
+    const [data, setData] = useState([]);
     const [checked, setChecked] = useState([]);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const result = await axios(
+                "https://juniortestketimdzinarishvili.herokuapp.com/api/products/read.php"
+            );
+            return result;
+        }
+        fetchData().then((response) => {
+            setData(response.data);
+        }
+        );
+    }, []);
 
     const handleCheck = async (id) => {
         setChecked((prev) => {
@@ -76,10 +58,8 @@ const Home = () => {
                 return <Product
                     handleCheck={() => handleCheck(item.sku)}
                     key={item.sku}
-                    sku={item.sku}
-                    name={item.name}
-                    price={item.price}
-                    type={item.type}
+                    item={item}
+
                     isChecked={checked.includes(item.sku)}
                 />
 

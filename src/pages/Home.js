@@ -12,13 +12,14 @@ const Home = () => {
     const [checked, setChecked] = useState([]);
     const navigate = useNavigate();
 
+    const fetchData = async () => {
+        const result = await axios(
+            "https://juniortestketimdzinarishvili.herokuapp.com/api/products/read.php"
+        );
+        return result;
+    }
     useEffect(() => {
-        const fetchData = async () => {
-            const result = await axios(
-                "https://juniortestketimdzinarishvili.herokuapp.com/api/products/read.php"
-            );
-            return result;
-        }
+
         fetchData().then((response) => {
             setData(response.data);
         }
@@ -28,7 +29,9 @@ const Home = () => {
     const handleCheck = async (id) => {
         setChecked((prev) => {
             if (prev.includes(id)) {
-                return prev.splice(prev.indexOf(id));
+                let newChecked = prev;
+                newChecked.splice(prev.indexOf(id), 1);
+                return newChecked;
             } else {
                 return [...prev, id];
             }
@@ -37,19 +40,30 @@ const Home = () => {
     const navToAdd = () => {
         navigate('/add-product');
     }
+    const massDelete = async () => {
+        console.log("mass delete");
+        await axios.post(
+            "https://juniortestketimdzinarishvili.herokuapp.com/api/products/delete.php",
+            {
+                "skus": checked
+            }
+        );
+        fetchData().then((response) => {
+            setData(response.data);
+        });
+    }
+
+
     const addBtn = {
         "text": "ADD",
         "function": () => navToAdd(),
     };
 
-    //ADD MASS DELETE FUNCTIONALITY
     const delBtn = {
         "text": "MASS DELETE",
-        "function": () => console.log("mass delete"),
+        "function": () => massDelete(),
         "id": "delete-product-btn"
     }
-    //navigate
-
     return <div className="App">
         <Header pageName="List"
             button1={addBtn}
@@ -60,13 +74,11 @@ const Home = () => {
                     handleCheck={() => handleCheck(item.sku)}
                     key={item.sku}
                     item={item}
-
-                    isChecked={checked.includes(item.sku)}
                 />
 
             })}
         </div>
-
+        {<div>{checked}</div>}
         <Footer />
     </div>
 }

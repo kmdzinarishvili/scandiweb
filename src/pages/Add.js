@@ -102,7 +102,6 @@ const Add = () => {
         setSubmitted(true);
         const valid = await validate();
         if (valid) {
-            console.log("valid");
             let reqObj = {
                 "sku": inputValues.sku,
                 "name": inputValues.name,

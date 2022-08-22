@@ -1,12 +1,10 @@
 import '../styles/product.css';
 
 //price must be float
-const Product = ({ item, handleCheck, isChecked }) => {
+const Product = ({ item, handleCheck }) => {
     const { sku, name, price, type } = item;
-    console.log(item);
     return <div className="prod">
         <input type="checkbox"
-            checked={isChecked}
             onChange={handleCheck}
             className="delete-checkbox" />
         <div className="text">

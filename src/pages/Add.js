@@ -41,13 +41,13 @@ const Add = () => {
         navigate('/');
     }
     const saveBtn = {
-        "text": "save",
+        "text": "SAVE",
         "function": null,
         "form": 'product_form'
     }
 
     const cancelBtn = {
-        "text": "cancel",
+        "text": "CANCEL",
         "function": () => goToHome(),
     }
 

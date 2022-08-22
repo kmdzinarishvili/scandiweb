@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -67,7 +68,7 @@ const Add = () => {
         if (inputValues["price"].length > 0 && !isNaN(inputValues["price"])) {
             setErrors((prev) => { return { ...prev, "priceIsValid": true } });
         }
-        if (inputValues['size'].length > 0 && !isNaN(inputValues["size"])) {
+        if (inputValues["size"].length > 0 && !isNaN(inputValues["size"])) {
             setErrors((prev) => { return { ...prev, "sizeIsValid": true } });
         }
         if (inputValues["height"].length > 0 && !isNaN(inputValues["height"])) {
@@ -96,18 +97,34 @@ const Add = () => {
 
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitted(true);
-
-
-        const valid = validate();
+        const valid = await validate();
         if (valid) {
-            //send request
+            console.log("valid");
+            let reqObj = {
+                "sku": inputValues.sku,
+                "name": inputValues.name,
+                "price": inputValues.price,
+                "type": inputValues.productType
+            }
+            if (inputValues.productType === "dvd") {
+                reqObj["size"] = inputValues.size;
+            } else if (inputValues.productType === "book") {
+                reqObj["weight"] = inputValues.weight;
+            } else {
+                reqObj["height"] = inputValues.height;
+                reqObj["width"] = inputValues.width;
+                reqObj["length"] = inputValues.length;
+            }
+            await axios.post(
+                "https://juniortestketimdzinarishvili.herokuapp.com/api/products/create.php",
+                reqObj).then((response) => {
+                    console.log(response)
+                });
             navigate("/");
         }
-        console.log(inputValues);
-        console.log(submitted);
     }
 
     return <>
@@ -158,12 +175,12 @@ const Add = () => {
                 Type Switcher:
                 <select id="productType" name="productType"
                     onChange={(e) => handleChange(e)}>
-                    <option value="DVD">DVD</option>
-                    <option value="Book">Book</option>
-                    <option value="Furniture">Furniture</option>
+                    <option value="dvd">DVD</option>
+                    <option value="book">Book</option>
+                    <option value="furniture">Furniture</option>
                 </select>
             </label>
-            {inputValues['productType'] === "DVD" ?
+            {inputValues['productType'] === "dvd" ?
                 <div id="DVD">
                     {submitted && !inputValues["size"] &&
                         <p className='error'>Please, submit required data</p>}
@@ -182,7 +199,7 @@ const Add = () => {
                     </label>
                     <p className='request'>Please, provide size.</p>
                 </div>
-                : inputValues['productType'] === "Furniture" ?
+                : inputValues['productType'] === "furniture" ?
                     <div id="Furniture">
                         {submitted && !inputValues["height"] &&
                             <p className='error'>Please, submit required data</p>}

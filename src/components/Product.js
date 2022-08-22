@@ -14,7 +14,7 @@ const Product = ({ item, handleCheck, isChecked }) => {
             <p>{name}</p>
             <p>{price.toFixed(2)} $</p>
             {type === "dvd" ?
-                <p>Size {item["size"]} MB</p> :
+                <p>Size: {item["size"]} MB</p> :
                 type === "book" ?
                     <p>Weight {item["weight"]} KG</p> :
                     <p>Dimension {item["length"]}x{item["width"]}x{item["height"]} KG</p>}

@@ -78,7 +78,6 @@ const Home = () => {
 
             })}
         </div>
-        {<div>{checked}</div>}
         <Footer />
     </div>
 }

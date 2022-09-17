@@ -111,7 +111,7 @@ const Add = () => {
                 setSubmitting(false);
             }
         }
-    }, [errors, submitting]);
+    }, [errors, submitting, inputValues, navigate]);
 
 
     const handleSubmit = async (e) => {

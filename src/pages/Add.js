@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -33,6 +33,7 @@ const Add = () => {
     });
 
     const [submitted, setSubmitted] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
     //handle submit updates
 
     const navigate = useNavigate();
@@ -51,79 +52,72 @@ const Add = () => {
         "function": () => goToHome(),
     }
 
-    const handleChange = (e) => {
+    const handleChange = async (e) => {
         const { name, value } = e.target;
         setInputValue({ ...inputValues, [name]: value });
-        validate();
     }
 
+    //validation useeffect
+    useEffect(() => {
+        setErrors(() => ({
+            "skuIsValid": inputValues["sku"].length > 0,
+            "nameIsValid": inputValues["name"].length > 0,
+            "priceIsValid": inputValues["price"].length > 0 && !isNaN(inputValues["price"]),
+            "sizeIsValid": inputValues["size"].length > 0 && !isNaN(inputValues["size"]),
+            "heightIsValid": inputValues["height"].length > 0 && !isNaN(inputValues["height"]),
+            "widthIsValid": inputValues["width"].length > 0 && !isNaN(inputValues["width"]),
+            "lengthIsValid": inputValues["length"].length > 0 && !isNaN(inputValues["length"]),
+            "weightIsValid": inputValues['weight'].length > 0 && !isNaN(inputValues["weight"]),
+        }));
+    }, [inputValues]);
 
-    const validate = () => {
-        if (inputValues["sku"].length > 0) {
-            setErrors((prev) => { return { ...prev, "skuIsValid": true } });
+    //submission useEffect 
+    useEffect(() => {
+        if (submitting) {
+            let valid = (errors["skuIsValid"] &&
+                errors["nameIsValid"] &&
+                errors["priceIsValid"] && (
+                    (inputValues["productType"] === "dvd" && errors["sizeIsValid"]) ||
+                    (inputValues["productType"] === "book" && errors["weightIsValid"]) ||
+                    (inputValues["productType"] === "furniture" && errors["heightIsValid"] && errors["widthIsValid"] && errors["lengthIsValid"])
+                ));
+            if (valid) {
+                let reqObj = {
+                    "sku": inputValues["sku"],
+                    "name": inputValues["name"],
+                    "price": inputValues["price"],
+                    "type": inputValues["productType"],
+                }
+                if (inputValues.productType === "dvd") {
+                    reqObj["size"] = inputValues["size"];
+                } else if (inputValues.productType === "book") {
+                    reqObj["weight"] = inputValues["weight"];
+                } else {
+                    reqObj["height"] = inputValues["height"];
+                    reqObj["width"] = inputValues["width"];
+                    reqObj["length"] = inputValues["length"];
+                }
+                axios.post(
+                    "https://juniortestketimdzinarishvili.herokuapp.com/products/create",
+                    reqObj
+                ).then(() => {
+                    setSubmitting(false);
+                    navigate("/");
+                }).catch((err) => {
+                    console.log(err);
+                });
+            }
+            else {
+                setSubmitting(false);
+            }
         }
-        if (inputValues["name"].length > 0) {
-            setErrors((prev) => { return { ...prev, "nameIsValid": true } });
-        }
-        if (inputValues["price"].length > 0 && !isNaN(inputValues["price"])) {
-            setErrors((prev) => { return { ...prev, "priceIsValid": true } });
-        }
-        if (inputValues["size"].length > 0 && !isNaN(inputValues["size"])) {
-            setErrors((prev) => { return { ...prev, "sizeIsValid": true } });
-        }
-        if (inputValues["height"].length > 0 && !isNaN(inputValues["height"])) {
-            setErrors((prev) => { return { ...prev, "heightIsValid": true } });
-        }
-        if (inputValues["width"].length > 0 && !isNaN(inputValues["width"])) {
-            setErrors((prev) => { return { ...prev, "widthIsValid": true } });
-        }
-        if (inputValues["length"].length > 0 && !isNaN(inputValues["length"])) {
-            setErrors((prev) => { return { ...prev, "lengthIsValid": true } });
-        }
-        if (inputValues['weight'].length > 0 && !isNaN(inputValues["weight"])) {
-            setErrors((prev) => { return { ...prev, "weightIsValid": true } });
-        }
+    }, [errors, submitting]);
 
-        let isValid = errors["skuIsValid"] && errors["nameIsValid"] && errors["priceIsValid"];
-        if (inputValues.productType === "dvd") {
-            isValid = isValid && errors["sizeIsValid"];
-        } else if (inputValues.productType === "book") {
-            isValid = isValid && errors["weightIsValid"];
-        } else {
-            isValid = isValid && errors["heightIsValid"] && errors["widthIsValid"] && errors["lengthIsValid"];
-        }
-        return isValid;
-
-
-    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitted(true);
-        const valid = await validate();
-        if (valid) {
-            let reqObj = {
-                "sku": inputValues.sku,
-                "name": inputValues.name,
-                "price": inputValues.price,
-                "type": inputValues.productType
-            }
-            if (inputValues.productType === "dvd") {
-                reqObj["size"] = inputValues.size;
-            } else if (inputValues.productType === "book") {
-                reqObj["weight"] = inputValues.weight;
-            } else {
-                reqObj["height"] = inputValues.height;
-                reqObj["width"] = inputValues.width;
-                reqObj["length"] = inputValues.length;
-            }
-            await axios.post(
-                "https://juniortestketimdzinarishvili.herokuapp.com/api/products/create.php",
-                reqObj).then((response) => {
-                    console.log(response)
-                });
-            navigate("/");
-        }
+        setSubmitting(true);
     }
 
     return <>

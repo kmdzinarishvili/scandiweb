@@ -115,10 +115,25 @@ const Add = () => {
 
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e?.preventDefault();
         setSubmitted(true);
         setSubmitting(true);
     }
+
+    const handleEnter = (event) => {
+        if (event.key.toLowerCase() === "enter") {
+            const form = event.target.form;
+            const index = [...form].indexOf(event.target);
+            if (index === (form.length - 1)) {
+                form.elements[0].click(); // save button
+            } else {
+                console.log("in else");
+                form.elements[index + 1].focus();
+            }
+            event.preventDefault();
+        }
+    };
+
 
     return <>
         <Header pageName="Add"
@@ -135,6 +150,7 @@ const Add = () => {
                     id='sku'
                     value={inputValues.sku}
                     onChange={(e) => handleChange(e)}
+                    onKeyDown={handleEnter}
                 />
             </label>
             {submitted && !inputValues["name"] &&
@@ -147,6 +163,7 @@ const Add = () => {
                     id='name'
                     value={inputValues.name}
                     onChange={(e) => handleChange(e)}
+                    onKeyDown={handleEnter}
                 />
             </label>
             {submitted && !inputValues["price"] &&
@@ -162,11 +179,13 @@ const Add = () => {
                     id='price'
                     value={inputValues.price}
                     onChange={(e) => handleChange(e)}
+                    onKeyDown={handleEnter}
                 />
             </label>
             <label>
                 Type Switcher:
                 <select id="productType" name="productType"
+                    onKeyDown={handleEnter}
                     onChange={(e) => handleChange(e)}>
                     <option value="dvd">DVD</option>
                     <option value="book">Book</option>
@@ -188,6 +207,7 @@ const Add = () => {
                             id='size'
                             value={inputValues.size}
                             onChange={(e) => handleChange(e)}
+                            onKeyDown={handleEnter}
                         />
                     </label>
                     <p className='request'>Please, provide size.</p>
@@ -207,6 +227,7 @@ const Add = () => {
                                 id='height'
                                 value={inputValues.height}
                                 onChange={(e) => handleChange(e)}
+                                onKeyDown={handleEnter}
                             />
                         </label>
                         {submitted && !inputValues["width"] &&
@@ -222,6 +243,7 @@ const Add = () => {
                                 id='width'
                                 value={inputValues.width}
                                 onChange={(e) => handleChange(e)}
+                                onKeyDown={handleEnter}
                             />
                         </label>
                         {submitted && !inputValues["length"] &&
@@ -237,6 +259,7 @@ const Add = () => {
                                 id='length'
                                 value={inputValues.length}
                                 onChange={(e) => handleChange(e)}
+                                onKeyDown={handleEnter}
                             />
                         </label>
                         <p className='request'>Please, provide dimensions.</p>
@@ -255,6 +278,7 @@ const Add = () => {
                                 id='weight'
                                 value={inputValues.weight}
                                 onChange={(e) => handleChange(e)}
+                                onKeyDown={handleEnter}
                             />
                         </label>
                         <p className='request'>Please, provide weight.</p>

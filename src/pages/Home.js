@@ -14,14 +14,14 @@ const Home = () => {
 
     const fetchData = async () => {
         const result = await axios(
-            "https://juniortestketimdzinarishvili.herokuapp.com/api/products/read.php"
+            "https://juniortestketimdzinarishvili.herokuapp.com/products/",
         );
         return result;
     }
     useEffect(() => {
 
-        fetchData().then((response) => {
-            setData(response.data);
+        fetchData().then((res) => {
+            setData(res.data);
         }
         );
     }, []);
@@ -41,16 +41,19 @@ const Home = () => {
         navigate('/add-product');
     }
     const massDelete = async () => {
-        console.log("mass delete");
-        await axios.post(
-            "https://juniortestketimdzinarishvili.herokuapp.com/api/products/delete.php",
-            {
-                "skus": checked
-            }
-        );
-        fetchData().then((response) => {
-            setData(response.data);
-        });
+        if (checked.length > 0) {
+            await axios.delete(
+                "https://juniortestketimdzinarishvili.herokuapp.com/products/massDelete",
+                {
+                    data: {
+                        "skus": checked
+                    }
+                }
+            )
+            fetchData().then((res) => {
+                setData(res.data);
+            });
+        }
     }
 
 

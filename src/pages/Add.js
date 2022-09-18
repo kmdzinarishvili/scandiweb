@@ -10,31 +10,44 @@ import "../styles/add.css";
 
 
 const Add = () => {
-    const [inputValues, setInputValue] = useState({
+    const [inputValues, setInputValues] = useState({
         sku: "",
         name: "",
         price: "",
         productType: "dvd",
-        size: "",
-        height: "",
-        width: "",
-        length: "",
-        weight: "",
+        "dvd": {
+            size: ""
+        },
+        "furniture": {
+            height: "",
+            width: "",
+            length: "",
+        },
+        "book": {
+            weight: "",
+        }
     });
     const [errors, setErrors] = useState({
         skuIsValid: false,
         nameIsValid: false,
         priceIsValid: false,
-        sizeIsValid: false,
-        heightIsValid: false,
-        widthIsValid: false,
-        lengthIsValid: false,
-        weightIsValid: false,
+        "dvd": {
+            sizeIsValid: false,
+        },
+        "furniture": {
+
+            heightIsValid: false,
+            widthIsValid: false,
+            lengthIsValid: false,
+        },
+        "book": {
+            weightIsValid: false,
+        }
     });
 
     const [submitted, setSubmitted] = useState(false);
     const [submitting, setSubmitting] = useState(false);
-    //handle submit updates
+
 
     const navigate = useNavigate();
 
@@ -54,7 +67,16 @@ const Add = () => {
 
     const handleChange = async (e) => {
         const { name, value } = e.target;
-        setInputValue({ ...inputValues, [name]: value });
+        setInputValues((prev) => {
+            return ({ ...prev, [name]: value })
+        });
+    }
+    const handleSpecificChange = async (e) => {
+        const { name, value } = e.target;
+        setInputValues((prev) => {
+            prev[prev['productType']][name] = value;
+            return { ...prev };
+        });
     }
 
     //validation useeffect
@@ -63,39 +85,39 @@ const Add = () => {
             "skuIsValid": inputValues["sku"].length > 0,
             "nameIsValid": inputValues["name"].length > 0,
             "priceIsValid": inputValues["price"].length > 0 && !isNaN(inputValues["price"]),
-            "sizeIsValid": inputValues["size"].length > 0 && !isNaN(inputValues["size"]),
-            "heightIsValid": inputValues["height"].length > 0 && !isNaN(inputValues["height"]),
-            "widthIsValid": inputValues["width"].length > 0 && !isNaN(inputValues["width"]),
-            "lengthIsValid": inputValues["length"].length > 0 && !isNaN(inputValues["length"]),
-            "weightIsValid": inputValues['weight'].length > 0 && !isNaN(inputValues["weight"]),
+            "dvd": {
+                "sizeIsValid": inputValues["dvd"]["size"].length > 0 && !isNaN(inputValues["dvd"]["size"]),
+            },
+            "furniture": {
+                "heightIsValid": inputValues["furniture"]["height"].length > 0 && !isNaN(inputValues["furniture"]["height"]),
+                "widthIsValid": inputValues["furniture"]["width"].length > 0 && !isNaN(inputValues["furniture"]["width"]),
+                "lengthIsValid": inputValues["furniture"]["length"].length > 0 && !isNaN(inputValues["furniture"]["length"]),
+            },
+            "book": {
+                "weightIsValid": inputValues["book"]['weight'].length > 0 && !isNaN(inputValues["book"]["weight"]),
+            }
         }));
     }, [inputValues]);
 
     //submission useEffect 
     useEffect(() => {
         if (submitting) {
-            let valid = (errors["skuIsValid"] &&
+
+            let generalValid = (errors["skuIsValid"] &&
                 errors["nameIsValid"] &&
-                errors["priceIsValid"] && (
-                    (inputValues["productType"] === "dvd" && errors["sizeIsValid"]) ||
-                    (inputValues["productType"] === "book" && errors["weightIsValid"]) ||
-                    (inputValues["productType"] === "furniture" && errors["heightIsValid"] && errors["widthIsValid"] && errors["lengthIsValid"])
-                ));
-            if (valid) {
+                errors["priceIsValid"]
+            );
+            let specificValid = true;
+            Object.entries(errors[inputValues["productType"]]).forEach(([key, bool]) => {
+                specificValid = specificValid && bool;
+            });
+            if (generalValid && specificValid) {
                 let reqObj = {
                     "sku": inputValues["sku"],
                     "name": inputValues["name"],
                     "price": inputValues["price"],
                     "type": inputValues["productType"],
-                }
-                if (inputValues.productType === "dvd") {
-                    reqObj["size"] = inputValues["size"];
-                } else if (inputValues.productType === "book") {
-                    reqObj["weight"] = inputValues["weight"];
-                } else {
-                    reqObj["height"] = inputValues["height"];
-                    reqObj["width"] = inputValues["width"];
-                    reqObj["length"] = inputValues["length"];
+                    ...inputValues[inputValues["productType"]]
                 }
                 axios.post(
                     "https://juniortestketimdzinarishvili.herokuapp.com/products/create",
@@ -127,12 +149,115 @@ const Add = () => {
             if (index === (form.length - 1)) {
                 form.elements[0].click(); // save button
             } else {
-                console.log("in else");
                 form.elements[index + 1].focus();
             }
             event.preventDefault();
         }
     };
+
+    const BookInputs = () => {
+        return (<div id="Book">
+            {submitted && !inputValues["book"]["weight"] &&
+                <p className='error'>Please, submit required data</p>}
+            {
+                submitted && isNaN(inputValues["book"]["weight"]) &&
+                <p className='error'>Please, provide the data of indicated type</p>
+            }
+            <label>
+                Weight(KG):
+                <input type="number"
+                    name="weight"
+                    id='weight'
+                    value={inputValues["book"]["weight"]}
+                    onChange={(e) => handleSpecificChange(e)}
+                    onKeyDown={handleEnter}
+                />
+            </label>
+            <p className='request'>Please, provide weight.</p>
+        </div>);
+    };
+    const FurnitureInputs = () => {
+        return (
+            <div id="Furniture">
+                {submitted && !inputValues["furniture"]["height"] &&
+                    <p className='error'>Please, submit required data</p>}
+                {
+                    submitted && isNaN(inputValues["furniture"]["height"]) &&
+                    <p className='error'>Please, provide the data of indicated type</p>
+                }
+                <label>
+                    Height(CM)
+                    <input type="number"
+                        name="height"
+                        id='height'
+                        value={inputValues["furniture"]["height"]}
+                        onChange={(e) => handleSpecificChange(e)}
+                        onKeyDown={handleEnter}
+                    />
+                </label>
+                {submitted && !inputValues["furniture"]["width"] &&
+                    <p className='error'>Please, submit required data</p>}
+                {
+                    submitted && isNaN(inputValues["furniture"]["width"]) &&
+                    <p className='error'>Please, provide the data of indicated type</p>
+                }
+                <label>
+                    Width(CM):
+                    <input type="number"
+                        name="width"
+                        id='width'
+                        value={inputValues["furniture"]["width"]}
+                        onChange={(e) => handleSpecificChange(e)}
+                        onKeyDown={handleEnter}
+                    />
+                </label>
+                {submitted && !inputValues["furniture"]["length"] &&
+                    <p className='error'>Please, submit required data</p>}
+                {
+                    submitted && isNaN(inputValues["furniture"]["length"]) &&
+                    <p className='error'>Please, provide the data of indicated type</p>
+                }
+                <label>
+                    Length(CM):
+                    <input type="number"
+                        name="length"
+                        id='length'
+                        value={inputValues["furniture"]["length"]}
+                        onChange={(e) => handleSpecificChange(e)}
+                        onKeyDown={handleEnter}
+                    />
+                </label>
+                <p className='request'>Please, provide dimensions.</p>
+            </div>
+        )
+    }
+    const DVDInputs = () => {
+        return (<div id="DVD">
+            {submitted && !inputValues["dvd"]["size"] &&
+                <p className='error'>Please, submit required data</p>}
+            {
+                submitted && isNaN(inputValues["dvd"]["size"]) &&
+                <p className='error'>Please, provide the data of indicated type</p>
+            }
+            <label>
+                Size(MB)
+                <input type="number"
+                    name="size"
+                    id='size'
+                    value={inputValues["dvd"]["size"]}
+                    onChange={(e) => handleSpecificChange(e)}
+                    onKeyDown={handleEnter}
+                />
+            </label>
+            <p className='request'>Please, provide size.</p>
+        </div>)
+    }
+
+    const typeSpecificInputs = {
+        "dvd": DVDInputs(),
+        "furniture": FurnitureInputs(),
+        "book": BookInputs()
+    }
 
 
     return <>
@@ -148,7 +273,7 @@ const Add = () => {
                 <input type="text"
                     name="sku"
                     id='sku'
-                    value={inputValues.sku}
+                    value={inputValues["sku"]}
                     onChange={(e) => handleChange(e)}
                     onKeyDown={handleEnter}
                 />
@@ -161,7 +286,7 @@ const Add = () => {
                     type="text"
                     name="name"
                     id='name'
-                    value={inputValues.name}
+                    value={inputValues["name"]}
                     onChange={(e) => handleChange(e)}
                     onKeyDown={handleEnter}
                 />
@@ -177,7 +302,7 @@ const Add = () => {
                 <input type="number"
                     name="price"
                     id='price'
-                    value={inputValues.price}
+                    value={inputValues["price"]}
                     onChange={(e) => handleChange(e)}
                     onKeyDown={handleEnter}
                 />
@@ -192,97 +317,7 @@ const Add = () => {
                     <option value="furniture">Furniture</option>
                 </select>
             </label>
-            {inputValues['productType'] === "dvd" ?
-                <div id="DVD">
-                    {submitted && !inputValues["size"] &&
-                        <p className='error'>Please, submit required data</p>}
-                    {
-                        submitted && isNaN(inputValues["size"]) &&
-                        <p className='error'>Please, provide the data of indicated type</p>
-                    }
-                    <label>
-                        Size(MB)
-                        <input type="number"
-                            name="size"
-                            id='size'
-                            value={inputValues.size}
-                            onChange={(e) => handleChange(e)}
-                            onKeyDown={handleEnter}
-                        />
-                    </label>
-                    <p className='request'>Please, provide size.</p>
-                </div>
-                : inputValues['productType'] === "furniture" ?
-                    <div id="Furniture">
-                        {submitted && !inputValues["height"] &&
-                            <p className='error'>Please, submit required data</p>}
-                        {
-                            submitted && isNaN(inputValues["height"]) &&
-                            <p className='error'>Please, provide the data of indicated type</p>
-                        }
-                        <label>
-                            Height(CM)
-                            <input type="number"
-                                name="height"
-                                id='height'
-                                value={inputValues.height}
-                                onChange={(e) => handleChange(e)}
-                                onKeyDown={handleEnter}
-                            />
-                        </label>
-                        {submitted && !inputValues["width"] &&
-                            <p className='error'>Please, submit required data</p>}
-                        {
-                            submitted && isNaN(inputValues["width"]) &&
-                            <p className='error'>Please, provide the data of indicated type</p>
-                        }
-                        <label>
-                            Width(CM):
-                            <input type="number"
-                                name="width"
-                                id='width'
-                                value={inputValues.width}
-                                onChange={(e) => handleChange(e)}
-                                onKeyDown={handleEnter}
-                            />
-                        </label>
-                        {submitted && !inputValues["length"] &&
-                            <p className='error'>Please, submit required data</p>}
-                        {
-                            submitted && isNaN(inputValues["length"]) &&
-                            <p className='error'>Please, provide the data of indicated type</p>
-                        }
-                        <label>
-                            Length(CM):
-                            <input type="number"
-                                name="length"
-                                id='length'
-                                value={inputValues.length}
-                                onChange={(e) => handleChange(e)}
-                                onKeyDown={handleEnter}
-                            />
-                        </label>
-                        <p className='request'>Please, provide dimensions.</p>
-                    </div> :
-                    <div id="Book">
-                        {submitted && !inputValues["weight"] &&
-                            <p className='error'>Please, submit required data</p>}
-                        {
-                            submitted && isNaN(inputValues["weight"]) &&
-                            <p className='error'>Please, provide the data of indicated type</p>
-                        }
-                        <label>
-                            Weight(KG):
-                            <input type="number"
-                                name="weight"
-                                id='weight'
-                                value={inputValues.weight}
-                                onChange={(e) => handleChange(e)}
-                                onKeyDown={handleEnter}
-                            />
-                        </label>
-                        <p className='request'>Please, provide weight.</p>
-                    </div>}
+            {typeSpecificInputs[inputValues['productType']]}
         </form>
 
 

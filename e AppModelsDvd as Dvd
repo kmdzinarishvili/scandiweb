@@ -1,205 +1,0 @@
-[1mdiff --git a/src/pages/Add.js b/src/pages/Add.js[m
-[1mindex 0c5200a..cd2b6d4 100644[m
-[1m--- a/src/pages/Add.js[m
-[1m+++ b/src/pages/Add.js[m
-[36m@@ -1,4 +1,4 @@[m
-[31m-import { useState } from 'react';[m
-[32m+[m[32mimport { useEffect, useState } from 'react';[m[41m[m
- import { useNavigate } from 'react-router-dom';[m
- import axios from 'axios';[m
- [m
-[36m@@ -33,6 +33,7 @@[m [mconst Add = () => {[m
-     });[m
- [m
-     const [submitted, setSubmitted] = useState(false);[m
-[32m+[m[32m    const [submitting, setSubmitting] = useState(false);[m[41m[m
-     //handle submit updates[m
- [m
-     const navigate = useNavigate();[m
-[36m@@ -51,79 +52,72 @@[m [mconst Add = () => {[m
-         "function": () => goToHome(),[m
-     }[m
- [m
-[31m-    const handleChange = (e) => {[m
-[32m+[m[32m    const handleChange = async (e) => {[m[41m[m
-         const { name, value } = e.target;[m
-         setInputValue({ ...inputValues, [name]: value });[m
-[31m-        validate();[m
-     }[m
- [m
-[32m+[m[32m    //validation useeffect[m[41m[m
-[32m+[m[32m    useEffect(() => {[m[41m[m
-[32m+[m[32m        setErrors(() => ({[m[41m[m
-[32m+[m[32m            "skuIsValid": inputValues["sku"].length > 0,[m[41m[m
-[32m+[m[32m            "nameIsValid": inputValues["name"].length > 0,[m[41m[m
-[32m+[m[32m            "priceIsValid": inputValues["price"].length > 0 && !isNaN(inputValues["price"]),[m[41m[m
-[32m+[m[32m            "sizeIsValid": inputValues["size"].length > 0 && !isNaN(inputValues["size"]),[m[41m[m
-[32m+[m[32m            "heightIsValid": inputValues["height"].length > 0 && !isNaN(inputValues["height"]),[m[41m[m
-[32m+[m[32m            "widthIsValid": inputValues["width"].length > 0 && !isNaN(inputValues["width"]),[m[41m[m
-[32m+[m[32m            "lengthIsValid": inputValues["length"].length > 0 && !isNaN(inputValues["length"]),[m[41m[m
-[32m+[m[32m            "weightIsValid": inputValues['weight'].length > 0 && !isNaN(inputValues["weight"]),[m[41m[m
-[32m+[m[32m        }));[m[41m[m
-[32m+[m[32m    }, [inputValues]);[m[41m[m
- [m
-[31m-    const validate = () => {[m
-[31m-        if (inputValues["sku"].length > 0) {[m
-[31m-            setErrors((prev) => { return { ...prev, "skuIsValid": true } });[m
-[31m-        }[m
-[31m-        if (inputValues["name"].length > 0) {[m
-[31m-            setErrors((prev) => { return { ...prev, "nameIsValid": true } });[m
-[31m-        }[m
-[31m-        if (inputValues["price"].length > 0 && !isNaN(inputValues["price"])) {[m
-[31m-            setErrors((prev) => { return { ...prev, "priceIsValid": true } });[m
-[31m-        }[m
-[31m-        if (inputValues["size"].length > 0 && !isNaN(inputValues["size"])) {[m
-[31m-            setErrors((prev) => { return { ...prev, "sizeIsValid": true } });[m
-[31m-        }[m
-[31m-        if (inputValues["height"].length > 0 && !isNaN(inputValues["height"])) {[m
-[31m-            setErrors((prev) => { return { ...prev, "heightIsValid": true } });[m
-[31m-        }[m
-[31m-        if (inputValues["width"].length > 0 && !isNaN(inputValues["width"])) {[m
-[31m-            setErrors((prev) => { return { ...prev, "widthIsValid": true } });[m
-[31m-        }[m
-[31m-        if (inputValues["length"].length > 0 && !isNaN(inputValues["length"])) {[m
-[31m-            setErrors((prev) => { return { ...prev, "lengthIsValid": true } });[m
-[31m-        }[m
-[31m-        if (inputValues['weight'].length > 0 && !isNaN(inputValues["weight"])) {[m
-[31m-            setErrors((prev) => { return { ...prev, "weightIsValid": true } });[m
-[31m-        }[m
-[31m-[m
-[31m-        let isValid = errors["skuIsValid"] && errors["nameIsValid"] && errors["priceIsValid"];[m
-[31m-        if (inputValues.productType === "dvd") {[m
-[31m-            isValid = isValid && errors["sizeIsValid"];[m
-[31m-        } else if (inputValues.productType === "book") {[m
-[31m-            isValid = isValid && errors["weightIsValid"];[m
-[31m-        } else {[m
-[31m-            isValid = isValid && errors["heightIsValid"] && errors["widthIsValid"] && errors["lengthIsValid"];[m
-[32m+[m[32m    //submission useEffect[m[41m [m
-[32m+[m[32m    useEffect(() => {[m[41m[m
-[32m+[m[32m        if (submitting) {[m[41m[m
-[32m+[m[32m            let valid = (errors["skuIsValid"] &&[m[41m[m
-[32m+[m[32m                errors["nameIsValid"] &&[m[41m[m
-[32m+[m[32m                errors["priceIsValid"] && ([m[41m[m
-[32m+[m[32m                    (inputValues["productType"] === "dvd" && errors["sizeIsValid"]) ||[m[41m[m
-[32m+[m[32m                    (inputValues["productType"] === "book" && errors["weightIsValid"]) ||[m[41m[m
-[32m+[m[32m                    (inputValues["productType"] === "furniture" && errors["heightIsValid"] && errors["widthIsValid"] && errors["lengthIsValid"])[m[41m[m
-[32m+[m[32m                ));[m[41m[m
-[32m+[m[32m            if (valid) {[m[41m[m
-[32m+[m[32m                let reqObj = {[m[41m[m
-[32m+[m[32m                    "sku": inputValues["sku"],[m[41m[m
-[32m+[m[32m                    "name": inputValues["name"],[m[41m[m
-[32m+[m[32m                    "price": inputValues["price"],[m[41m[m
-[32m+[m[32m                    "type": inputValues["productType"],[m[41m[m
-[32m+[m[32m                }[m[41m[m
-[32m+[m[32m                if (inputValues.productType === "dvd") {[m[41m[m
-[32m+[m[32m                    reqObj["size"] = inputValues["size"];[m[41m[m
-[32m+[m[32m                } else if (inputValues.productType === "book") {[m[41m[m
-[32m+[m[32m                    reqObj["weight"] = inputValues["weight"];[m[41m[m
-[32m+[m[32m                } else {[m[41m[m
-[32m+[m[32m                    reqObj["height"] = inputValues["height"];[m[41m[m
-[32m+[m[32m                    reqObj["width"] = inputValues["width"];[m[41m[m
-[32m+[m[32m                    reqObj["length"] = inputValues["length"];[m[41m[m
-[32m+[m[32m                }[m[41m[m
-[32m+[m[32m                axios.post([m[41m[m
-[32m+[m[32m                    "https://juniortestketimdzinarishvili.herokuapp.com/products/create",[m[41m[m
-[32m+[m[32m                    reqObj[m[41m[m
-[32m+[m[32m                ).then(() => {[m[41m[m
-[32m+[m[32m                    setSubmitting(false);[m[41m[m
-[32m+[m[32m                    navigate("/");[m[41m[m
-[32m+[m[32m                }).catch((err) => {[m[41m[m
-[32m+[m[32m                    console.log(err);[m[41m[m
-[32m+[m[32m                });[m[41m[m
-[32m+[m[32m            }[m[41m[m
-[32m+[m[32m            else {[m[41m[m
-[32m+[m[32m                setSubmitting(false);[m[41m[m
-[32m+[m[32m            }[m[41m[m
-         }[m
-[31m-        return isValid;[m
-[32m+[m[32m    }, [errors, submitting]);[m[41m[m
- [m
- [m
-[31m-    }[m
-[31m-[m
-     const handleSubmit = async (e) => {[m
-         e.preventDefault();[m
-         setSubmitted(true);[m
-[31m-        const valid = await validate();[m
-[31m-        if (valid) {[m
-[31m-            let reqObj = {[m
-[31m-                "sku": inputValues.sku,[m
-[31m-                "name": inputValues.name,[m
-[31m-                "price": inputValues.price,[m
-[31m-                "type": inputValues.productType[m
-[31m-            }[m
-[31m-            if (inputValues.productType === "dvd") {[m
-[31m-                reqObj["size"] = inputValues.size;[m
-[31m-            } else if (inputValues.productType === "book") {[m
-[31m-                reqObj["weight"] = inputValues.weight;[m
-[31m-            } else {[m
-[31m-                reqObj["height"] = inputValues.height;[m
-[31m-                reqObj["width"] = inputValues.width;[m
-[31m-                reqObj["length"] = inputValues.length;[m
-[31m-            }[m
-[31m-            await axios.post([m
-[31m-                "https://juniortestketimdzinarishvili.herokuapp.com/api/products/create.php",[m
-[31m-                reqObj).then((response) => {[m
-[31m-                    console.log(response)[m
-[31m-                });[m
-[31m-            navigate("/");[m
-[31m-        }[m
-[32m+[m[32m        setSubmitting(true);[m[41m[m
-     }[m
- [m
-     return <>[m
-[1mdiff --git a/src/pages/Home.js b/src/pages/Home.js[m
-[1mindex 7d24870..b726dc6 100644[m
-[1m--- a/src/pages/Home.js[m
-[1m+++ b/src/pages/Home.js[m
-[36m@@ -14,14 +14,14 @@[m [mconst Home = () => {[m
- [m
-     const fetchData = async () => {[m
-         const result = await axios([m
-[31m-            "https://juniortestketimdzinarishvili.herokuapp.com/api/products/read.php"[m
-[32m+[m[32m            "https://juniortestketimdzinarishvili.herokuapp.com/products/",[m[41m[m
-         );[m
-         return result;[m
-     }[m
-     useEffect(() => {[m
- [m
-[31m-        fetchData().then((response) => {[m
-[31m-            setData(response.data);[m
-[32m+[m[32m        fetchData().then((res) => {[m[41m[m
-[32m+[m[32m            setData(res.data);[m[41m[m
-         }[m
-         );[m
-     }, []);[m
-[36m@@ -41,16 +41,19 @@[m [mconst Home = () => {[m
-         navigate('/add-product');[m
-     }[m
-     const massDelete = async () => {[m
-[31m-        console.log("mass delete");[m
-[31m-        await axios.post([m
-[31m-            "https://juniortestketimdzinarishvili.herokuapp.com/api/products/delete.php",[m
-[31m-            {[m
-[31m-                "skus": checked[m
-[31m-            }[m
-[31m-        );[m
-[31m-        fetchData().then((response) => {[m
-[31m-            setData(response.data);[m
-[31m-        });[m
-[32m+[m[32m        if (checked.length > 0) {[m[41m[m
-[32m+[m[32m            await axios.delete([m[41m[m
-[32m+[m[32m                "https://juniortestketimdzinarishvili.herokuapp.com/products/massDelete",[m[41m[m
-[32m+[m[32m                {[m[41m[m
-[32m+[m[32m                    data: {[m[41m[m
-[32m+[m[32m                        "skus": checked[m[41m[m
-[32m+[m[32m                    }[m[41m[m
-[32m+[m[32m                }[m[41m[m
-[32m+[m[32m            )[m[41m[m
-[32m+[m[32m            fetchData().then((res) => {[m[41m[m
-[32m+[m[32m                setData(res.data);[m[41m[m
-[32m+[m[32m            });[m[41m[m
-[32m+[m[32m        }[m[41m[m
-     }[m
- [m
- [m
